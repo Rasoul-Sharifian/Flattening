@@ -30,7 +30,7 @@ end
 end
 
 % figure , pcshow([x ,y ,z]);
-path_img = '/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/1_Data Preparation/Color/';
+path_img = '../1_DataPreparation/Color/';
 
 img_filename = [path_img 'color_frame_' num2str(img_number) '.png'];
 I = imread(img_filename);
@@ -45,15 +45,15 @@ figure , imshow(I,[])
 % z_new = z([600:1150],[80:680]);
 % figure , pcshow([x_new(:) , y_new(:) , z_new(:)]);
 % 
-%Get polygon coordinates
-h = impoly;
-
-%Create binary image mask
-mask = createMask(h);
-
-%Set all pixels inside polygon to 255, and all pixels outside polygon to 0
-mask = uint8(mask * 255);
-imwrite(mask,['img_masks/mask' num2str(img_number) '.png'])
+% %Get polygon coordinates
+% h = impoly;
+% 
+% %Create binary image mask
+% mask = createMask(h);
+% 
+% %Set all pixels inside polygon to 255, and all pixels outside polygon to 0
+% mask = uint8(mask * 255);
+% imwrite(mask,['img_masks/mask' num2str(img_number) '.png'])
 mask = imread(['img_masks/mask' num2str(img_number) '.png']);
 mask = mask';
 % Display binary mask
