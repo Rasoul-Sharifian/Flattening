@@ -1,25 +1,21 @@
 % In this version we
 % 1 - compute the 3d mesh based on a given step, so we have a downsampled version of mesh.
 % 2 - we have a perfect corresponding mask between 3d and 2d
+
 %function [X,F] = create_3d_ply_V1(ply_path , step)
 
 clc
 clear 
 close all
 
-%[0 17 30 35 40 45 50 55 60 65 70]
 img_number = 115; 
-%
-% step_size = 10;
+
 
 
 % Read .mat file contains all 3d points corresponds to image pixels Intel
 % camera
 path = '../1_DataPreparation/PtCloud/';
-%path = '/media/rasoul/6aa24340-1780-4aae-8b9f-ffb7e2f3402c/Partial Nephrectomy/Codes/Github/Flatenning/data/Intel/data_26_feb/PtCloud/';
-Folder = cd;
-Folder2 = fullfile(Folder, '..');
-% x = fullfile(dataFolderPath, ['frame_' num2str(img_number) '.ply'])
+
 filename = [path 'frame_' num2str(img_number) '.ply'];
 ptCloud = pcread(filename);
 %  figure , pcshow(ptCloud);
