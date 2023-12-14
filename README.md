@@ -1,1 +1,1 @@
-The repo for maintaining the data and flatteing steps
+This repo maintains the data and flattening steps
