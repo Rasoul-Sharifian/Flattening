@@ -2,15 +2,11 @@
 % 1 - compute the 3d mesh based on a given step, so we have a downsampled version of mesh.
 % 2 - we have a perfect corresponding mask between 3d and 2d
 
-%function [X,F] = create_3d_ply_V1(ply_path , step)
-
 clc
 clear 
 close all
 
 img_number = 115; 
-
-
 
 % Read .mat file contains all 3d points corresponds to image pixels Intel
 % camera
@@ -34,7 +30,6 @@ end
 end
 
 % figure , pcshow([x ,y ,z]);
-%path_img = '/media/rasoul/6aa24340-1780-4aae-8b9f-ffb7e2f3402c/Partial Nephrectomy/Codes/Github/Flatenning/data/Intel/data_26_feb/Color/';
 path_img = '/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/1_Data Preparation/Color/';
 
 img_filename = [path_img 'color_frame_' num2str(img_number) '.png'];
@@ -58,10 +53,8 @@ mask = createMask(h);
 
 %Set all pixels inside polygon to 255, and all pixels outside polygon to 0
 mask = uint8(mask * 255);
-imwrite(mask,['/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/' ...
-    '2_Data Preprocessing/img_masks/mask' num2str(img_number) '.png'])
-mask = imread(['/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/' ...
-    '2_Data Preprocessing/img_masks/mask' num2str(img_number) '.png']);
+imwrite(mask,['img_masks/mask' num2str(img_number) '.png'])
+mask = imread(['img_masks/mask' num2str(img_number) '.png']);
 mask = mask';
 % Display binary mask
 figure
@@ -157,7 +150,5 @@ options.texture_coords = newVertices_img;
 plot_mesh_modified(newVertices_img , newFaces, options);
 shading faceted; axis tight;
 pause(1)
-write_obj (['/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/' ...
-    '2_Data Preprocessing/Masked meshes/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
-write_obj (['/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/' ...
-    '2_Data Preprocessing/Masked meshes/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)
+write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
+write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)
