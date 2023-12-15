@@ -37,20 +37,16 @@ I = imread(img_filename);
 figure , imshow(I,[])
 
 % I_new = I ([80:680],[600:1150],:);
-% 
 % figure , imshow(I_new,[])
-% 
 % x_new = x([600:1150],[80:680]);
 % y_new = y([600:1150],[80:680]);
 % z_new = z([600:1150],[80:680]);
 % figure , pcshow([x_new(:) , y_new(:) , z_new(:)]);
-% 
+
 % %Get polygon coordinates
 % h = impoly;
-% 
 % %Create binary image mask
 % mask = createMask(h);
-% 
 % %Set all pixels inside polygon to 255, and all pixels outside polygon to 0
 % mask = uint8(mask * 255);
 % imwrite(mask,['img_masks/mask' num2str(img_number) '.png'])
@@ -103,20 +99,20 @@ end
 X = V_img';
 F = F_img';
 
-% figure , 
-% options.texture = (I);
-% options.PSize = 64;
-% options.texture_coords = X;
-% % clear option
-% plot_mesh_modified(X , F, options);
-% shading faceted; axis tight;
+figure , 
+options.texture = (I);
+options.PSize = 64;
+options.texture_coords = X;
+% clear option
+plot_mesh_modified(X , F, options);
+shading faceted; axis tight;
 % clear option
 % figure , 
 % options.texture = (I);
 % options.PSize = 64;
 % options.texture_coords = X;
 % Y = V_3d';
-% plot_mesh_modified(Y , F, options);
+% plot_mesh(Y , F, []);
 % shading faceted; axis tight;
 
 %removing vertices outside mask from created meshes
@@ -132,6 +128,7 @@ for i = 1:numel(verticesToRemove)
     newFaces = newFaces - (F' > verticesToRemove(i));
 end
 newFaces(any(isnan(newFaces), 2), :) = [];
+
 pause(1)
 clear option
 figure , 
