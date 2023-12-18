@@ -1,0 +1,164 @@
+clc
+clear
+% close all
+main_path = '/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/';
+
+interp_method = 'cubic'; % 'linear' 'nearest'	'cubic'		
+for frame_number = [0 17 30 35 40 45 50 55 60 65 70]
+path_rgbimgs = [main_path  ...
+    '1_Data Preparation/Color/'];
+
+number_of_imgs = 89; 
+
+for lambda = 951%[997:-2:950 948:-40:1]
+    Image_path = [path_rgbimgs 'color_frame_' num2str(frame_number) '.png'];
+    Ia  = imread(Image_path);
+    Ia = im2double(Ia);
+%     f1 = figure;  
+%     ax1 = axes;
+%     imshow(Ia , [])
+%     axis on
+
+
+    [X , Y] = meshgrid(1:size(Ia , 2) , 1:size(Ia ,1));
+
+%     [vflat , fflat] = readOBJ(['IPC/Selected2/Flat_meshes/Frame_' num2str(frame_number) '/lambda' num2str(lambda*1000) '.obj']);%read_off([path_flattened_meshes 'ARAP_s3_' num2str(number) '.off']);
+    [vflat , fflat] = readOBJ([main_path ...
+        '3_Flattening/Flattened Meshes ' num2str(frame_number) '/' ...
+        num2str(lambda) '.obj']);%read_off([path_flattened_meshes 'ARAP_s3_' num2str(number) '.off']);
+
+    vflat = vflat';
+    vflat_new(1,:) = vflat(1,:);%round(1/1000 * (vflat(1,:) - min(vflat(1,:))) * size(Ia , 1));
+    vflat_new(2,:) = vflat(2,:);%round(1/1000 * (vflat(2,:) - min(vflat(2,:))) * size(Ia , 2));
+
+    outputSize_x = 900; %max(vflat_new(1,:));
+    outputSize_y = 900; %max(vflat_new(2,:));
+    
+    Image_out_r = ones(outputSize_x, outputSize_y);
+    Image_out_g = ones(outputSize_x, outputSize_y);
+    Image_out_b = ones(outputSize_x, outputSize_y);
+
+    xp = 1:outputSize_x;
+    yp = 1:outputSize_y;
+    [XX , YY] = meshgrid(xp , yp);
+    xq = XX;
+    yq = YY;
+
+%     [vimg , fimg] = readOBJ(['IPC/Selected2/mesh_img_grid/Mesh_fram_' num2str(frame_number) '_img_masked.obj']);%read_off([path_regular_mesh num2str(number) '_img_md.off']);
+    [vimg , fimg] = readOBJ([main_path ...
+        '2_Data Preprocessing/Masked meshes/' 'Mesh_fram_' num2str(frame_number) '_img_masked.obj']);%
+
+vimg = vimg';
+% 
+%     f2 = figure;
+%     ax2 = axes;
+    fimg = fimg';
+    fflat = fflat';
+    for T = 1:size(fflat,2)
+        Vo1 = vimg(1:2,fimg(1,T)); % Cartesian coordinates of the first vertex in output image
+        Vo2 = vimg(1:2,fimg(2,T)); % Cartesian coordinates of the secend vertex in output image
+        Vo3 = vimg(1:2,fimg(3,T)); % Cartesian coordinates of the third vertex in output image
+        Vo = [Vo1 Vo2 Vo3 Vo1];
+        
+        xo = Vo(1,:)';
+        yo = Vo(2,:)';
+        
+        Vi1 = vflat_new(1:2,fflat(1,T)); % Cartesian coordinates of the first vertex in input image
+        Vi2 = vflat_new(1:2,fflat(2,T)); % Cartesian coordinates of the secend vertex in input image
+        Vi3 = vflat_new(1:2,fflat(3,T)); % Cartesian coordinates of the third vertex in input image
+        Vi = [Vi1 Vi2 Vi3 Vi1];
+
+        xi = Vi(1,:)';
+        yi = Vi(2,:)';
+       
+        in_on = inpolygon(xq, yq,xi, yi);
+
+       [xs1, ys1] = find(in_on==1);
+       id = find(in_on==1);
+
+        xs1 = xs1(:);
+        ys1 = ys1(:);
+%          hold (ax2 , 'on')   
+%         plot(ax2,xi,yi) % polygon
+%         axis equal
+
+%          plot(ax2 , xq(in_on),yq(in_on),'r.') % points inside
+        C = [xq(in_on),yq(in_on)];
+% if k == 1
+%         plot(ax2 , xq(~in_on),yq(~in_on),'b.') % points outside 
+%         hold (ax2 , 'off')
+% else
+%         hold (ax2 , 'off')
+% end
+        
+        VertexOut = [Vo1 Vo2 Vo3];
+        temp_Fo = [1 , 2 , 3];
+
+        VertexIn = [Vi1 Vi2 Vi3];
+        temp_Fi = [1 , 2 , 3];
+      
+
+%         hold (ax1 , 'on')
+%         plot(ax1 , xo,yo ,'b') % polygon
+%         axis equal
+%         hold (ax1 , 'off')
+
+        TRo = triangulation(temp_Fo,VertexOut');
+        TR_Flat = triangulation(temp_Fi,VertexIn');
+        
+        B = cartesianToBarycentric(TR_Flat,ones(1,size(C,1))',C);
+   if C~=0     
+        Px = B(:,1) * VertexOut(1,1) + B(:,2) * VertexOut(1,2) + B(:,3) * VertexOut(1,3);
+        Py = B(:,1) * VertexOut(2,1) + B(:,2) * VertexOut(2,2) + B(:,3) * VertexOut(2,3);
+
+%         hold (ax1 , 'on')
+%         axis equal
+% 
+%         plot(ax1 , round(Px),round(Py) ,'b') % polygon
+%         hold (ax1 , 'off')
+            
+        Vr = Ia(:,:,1);
+        Vqr = interp2(X, Y, Vr, Px, Py, interp_method);
+        Image_out_r(id) = Vqr;
+        
+        Vg = Ia(:,:,2);
+        Vqg = interp2(X, Y, Vg, Px, Py, interp_method);
+        Image_out_g(id) = Vqg;
+        
+        Vb = Ia(:,:,3);
+        Vqb = interp2(X, Y, Vb, Px, Py, interp_method);
+        Image_out_b(id) = Vqb;
+        
+%         hold(ax3, 'on')
+% figure,
+% Image_out = cat(3 , Image_out_r, Image_out_g, Image_out_b);
+%         imshow(Image_out,[])
+%        hold(ax3, 'off')
+
+        kk = 5;
+%         display(round (T/size(fflat,2) * 100))
+   end 
+        clear C
+    end
+    Image_out = cat(3 , Image_out_r, Image_out_g, Image_out_b);
+    figure , imshow(Image_out, [])
+        kk = 5;
+
+        folderName = ['img_flat_'  num2str(frame_number)];
+        
+        if ~exist(folderName, 'dir')
+            mkdir(folderName);
+            fprintf('Folder "%s" created.\n', folderName);
+        else
+            fprintf('Folder "%s" already exists.\n', folderName);
+        end
+
+        path_output_imgs = [main_path ...
+            '4_Warping/img_flat_'  num2str(frame_number) '/Frame_lambda' num2str(lambda) '.png'];
+    imwrite(Image_out , path_output_imgs )
+    clear vflat_new
+    close all
+end
+lambda
+frame_number
+end
