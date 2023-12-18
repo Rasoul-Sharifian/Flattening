@@ -34,7 +34,7 @@ path_img = '../1_DataPreparation/Color/';
 
 img_filename = [path_img 'color_frame_' num2str(img_number) '.png'];
 I = imread(img_filename);
-figure , imshow(I,[])
+% figure , imshow(I,[])
 
 % I_new = I ([80:680],[600:1150],:);
 % figure , imshow(I_new,[])
@@ -99,13 +99,13 @@ end
 X = V_img';
 F = F_img';
 
-figure , 
-options.texture = (I);
-options.PSize = 64;
-options.texture_coords = X;
-% clear option
-plot_mesh_modified(X , F, options);
-shading faceted; axis tight;
+% figure , 
+% options.texture = (I);
+% options.PSize = 64;
+% options.texture_coords = X;
+% % clear option
+% plot_mesh_modified(X , F, options);
+% shading faceted; axis tight;
 % clear option
 % figure , 
 % options.texture = (I);
@@ -128,6 +128,46 @@ for i = 1:numel(verticesToRemove)
     newFaces = newFaces - (F' > verticesToRemove(i));
 end
 newFaces(any(isnan(newFaces), 2), :) = [];
+
+% figure , 
+% plot(newVertices_img(1,:), newVertices_img(2,:),'*')
+% hold on
+% plot(newVertices_img(1,k), newVertices_img(2, k))
+
+
+% Step 3: Determine which points are inside each face
+mask_modified = zeros(1280,720);
+for i = 1:size(newFaces, 1)
+    p1 = newVertices_img(1:2, newFaces(i,1));
+    p2 = newVertices_img(1:2, newFaces(i,2));
+    p3 = newVertices_img(1:2, newFaces(i,3));
+
+    P = [p1,p2,p3];
+    % Step 1: Define bounding box
+    bbox = [min(P(1,:)), max(P(1,:)), min(P(2,:)), max(P(2,:))]
+
+    % Step 2: Generate grid of points within bounding box
+    [X,Y] = meshgrid(bbox(1):1:bbox(2), bbox(3):1:bbox(4));
+    points = [X(:), Y(:)];
+
+    [in_out] = inpolygon(points(:,1), points(:,2), P(1, :),P(2, :));
+
+
+    in_out = reshape(in_out,[step + 1, step + 1]);
+    X_ = X.*in_out;
+    Y_ = Y.*in_out;
+    t1 = X_(X_(:)>0);
+    t2 = Y_(Y_(:)>0);
+    sz = [1280 720];
+    ind = sub2ind(sz,t1(:),t2(:));
+    mask_modified (ind) = 1;
+
+end
+
+% Step 4: Create binary image
+figure
+imshow(mask_modified, []);
+imwrite(mask_modified,['masks_modified/' num2str(img_number) '.png'])
 
 pause(1)
 clear option
