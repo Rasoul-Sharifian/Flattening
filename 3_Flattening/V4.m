@@ -6,7 +6,7 @@ clc
 clear
 % close all
 for frmam_ind = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
-path = ['../2_Data Preprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind), '_3d_masked.obj'];
+path = ['../2_DataPreprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind), '_3d_masked.obj'];
 
 [v, f] = readOBJ(path) ;
 
@@ -14,7 +14,7 @@ path = ['../2_Data Preprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind), 
 % title('3d mesh')
 % shading faceted; axis tight;
 % pause(1)
-path_img = ['../2_Data Preprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind), '_img_masked.obj'];
+path_img = ['../2_DataPreprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind), '_img_masked.obj'];
 [v_img, f_img] = readOBJ(path_img) ;
 p0 = zeros(size(v_img ,1) * 2 ,1);
 p0(1:2:end) = v_img(:,1);
