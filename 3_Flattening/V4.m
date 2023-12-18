@@ -5,9 +5,8 @@
 clc
 clear
 % close all
-for frmam_ind = [90];[0 17 30 35 40 45 50 55 60 65 70]
-path = ['/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/' ...
-    '2_Data Preprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind) , '_3d_masked.obj'];
+for frmam_ind = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
+path = ['../2_Data Preprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind), '_3d_masked.obj'];
 
 [v, f] = readOBJ(path) ;
 
@@ -15,8 +14,7 @@ path = ['/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_202
 % title('3d mesh')
 % shading faceted; axis tight;
 % pause(1)
-path_img = ['/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/' ...
-    '2_Data Preprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind) , '_img_masked.obj'];
+path_img = ['../2_Data Preprocessing/Masked meshes/Mesh_fram_', num2str(frmam_ind), '_img_masked.obj'];
 [v_img, f_img] = readOBJ(path_img) ;
 p0 = zeros(size(v_img ,1) * 2 ,1);
 p0(1:2:end) = v_img(:,1);
@@ -101,7 +99,7 @@ hold on
 figure, plot(0:.001:1, cost)
 
 xlabel('lambda')
-legend('Cost_{angle}' , 'Cost_{grid}' , 'Cost_{total}')
+legend('Cost_{angle}', 'Cost_{grid}', 'Cost_{total}')
 title(sprintf('mu angle: %.2f mu grid %.2f ', mu_angle, mu_grid)) 
 grid on
 grid minor
