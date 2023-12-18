@@ -6,7 +6,7 @@ clc
 clear 
 close all
 
-img_number = 115; 
+img_number = 115; %[0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
 
 % Read .mat file contains all 3d points corresponds to image pixels Intel
 % camera
@@ -169,23 +169,23 @@ figure
 imshow(mask_modified, []);
 imwrite(mask_modified,['masks_modified/' num2str(img_number) '.png'])
 
-pause(1)
-clear option
-figure , 
-options.texture = (I);
-options.PSize = 64;
-options.texture_coords = newVertices_img;
-Y = V_3d';
-plot_mesh_modified(newVertices_3d , newFaces, options);
-shading faceted; axis tight;
-pause(1)
-clear option
-figure , 
-options.texture = (I);
-options.PSize = 64;
-options.texture_coords = newVertices_img;
-plot_mesh_modified(newVertices_img , newFaces, options);
-shading faceted; axis tight;
+% pause(1)
+% clear option
+% figure , 
+% options.texture = (I);
+% options.PSize = 64;
+% options.texture_coords = newVertices_img;
+% Y = V_3d';
+% plot_mesh_modified(newVertices_3d , newFaces, options);
+% shading faceted; axis tight;
+% pause(1)
+% clear option
+% figure , 
+% options.texture = (I);
+% options.PSize = 64;
+% options.texture_coords = newVertices_img;
+% plot_mesh_modified(newVertices_img , newFaces, options);
+% shading faceted; axis tight;
 pause(1)
 write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
 write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)
