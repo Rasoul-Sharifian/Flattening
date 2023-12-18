@@ -21,11 +21,11 @@ y = reshape(double(ptCloud.Location(:,2)) , [1280 , 720]);
 z = reshape(double(ptCloud.Location(:,3)) , [1280 , 720]);
 for i = 1:1280
     for j = 1:720
-if x(i,j) == 0 & y(i,j) == 0 & z(i,j) == 0
-    x(i,j) = randn(1)/5;
-    y(i,j) = randn(1)/5;
-    z(i,j) = randn(1)/5;
-end
+        if x(i,j) == 0 & y(i,j) == 0 & z(i,j) == 0
+            x(i,j) = randn(1)/5;
+            y(i,j) = randn(1)/5;
+            z(i,j) = randn(1)/5;
+        end
     end
 end
 
@@ -96,7 +96,7 @@ for i = 1:floor((width-1)/step)
     end
 end
 
-X = V_img';
+V_img = V_img';
 F = F_img';
 
 % figure , 
@@ -118,7 +118,7 @@ F = F_img';
 %removing vertices outside mask from created meshes
 % Remove vertices from mesh
 newVertices_3d = V_3d';
-newVertices_img = X;
+newVertices_img = V_img;
 newVertices_3d(: ,verticesToRemove) = [];
 newVertices_img(: ,verticesToRemove) = [];
 
