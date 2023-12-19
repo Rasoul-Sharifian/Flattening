@@ -7,7 +7,7 @@ interp_method = 'cubic'; % 'linear' 'nearest'	'cubic' 'spline'
 for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
     path_rgbimgs = '../1_DataPreparation/Color/';
 
-    for lambda = 1;%960:-10:800
+    for lambda = 960:-10:800
         
         Image_path = [path_rgbimgs 'color_frame_' num2str(frame_number) '.png'];
         Ia  = imread(Image_path);
