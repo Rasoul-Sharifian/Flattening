@@ -50,13 +50,13 @@ for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
 	        w3(~r)=0; w3 = w3.*mask_out;
             mask_out(r) = 0;
 
-            % Vo1 = vimg(1:2,fimg(1,T)); % Cartesian coordinates of the first vertex in output image
-            % Vo2 = vimg(1:2,fimg(2,T)); % Cartesian coordinates of the secend vertex in output image
-            % Vo3 = vimg(1:2,fimg(3,T)); % Cartesian coordinates of the third vertex in output image
-            % VertexOut = [Vo1 Vo2 Vo3];
-            % 
-	        % xCA = xCA + w1.*VertexOut(1,1) + w2.*VertexOut(1,2) + w3.*VertexOut(1,3);
-	        % yCA = yCA + w1.*VertexOut(2,1) + w2.*VertexOut(2,2) + w3.*VertexOut(2,3);
+            Vo1 = vimg(1:2,fimg(1,T)); % Cartesian coordinates of the first vertex in output image
+            Vo2 = vimg(1:2,fimg(2,T)); % Cartesian coordinates of the secend vertex in output image
+            Vo3 = vimg(1:2,fimg(3,T)); % Cartesian coordinates of the third vertex in output image
+            VertexOut = [Vo1 Vo2 Vo3];
+
+	        xCA = xCA + w1.*VertexOut(1,1) + w2.*VertexOut(1,2) + w3.*VertexOut(1,3);
+	        yCA = yCA + w1.*VertexOut(2,1) + w2.*VertexOut(2,2) + w3.*VertexOut(2,3);
 
         end
 
@@ -64,7 +64,7 @@ for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
         Image_out(:,:,1) = interp2(X,Y,double(Ia(:,:,1)),xCA,yCA);
         Image_out(:,:,2) = interp2(X,Y,double(Ia(:,:,2)),xCA,yCA);
         Image_out(:,:,3) = interp2(X,Y,double(Ia(:,:,3)),xCA,yCA);
-        % figure , imshow(Image_out, [])
+        figure , imshow(Image_out, [])
 
         folderName = ['img_flat_gs' num2str(gridsize),'/Frame_' num2str(frame_number)];
         if ~exist(folderName, 'dir')
