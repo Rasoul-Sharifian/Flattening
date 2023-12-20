@@ -6,7 +6,8 @@ clc
 clear 
 close all
 
-img_number = 115; %[0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
+for img_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
+gridsize = 15;
 
 % Read .mat file contains all 3d points corresponds to image pixels Intel
 % camera
@@ -64,9 +65,8 @@ height = size((I),1);
  k = 1;
  c = 1;
  % use mesh function
- step = 15;
-for i = 1:step:width
-    for j = 1:step:height
+for i = 1:gridsize:width
+    for j = 1:gridsize:height
         new_v = [i,j];
         V(k,:) = new_v;
         V_3d(k,:) = [x(i,j), y(i,j), z(i,j)];
@@ -80,12 +80,12 @@ for i = 1:step:width
     end
 end
 k = 1;
-for i = 1:floor((width-1)/step) 
-    for j = 1:floor((height-1)/step)
+for i = 1:floor((width-1)/gridsize) 
+    for j = 1:floor((height-1)/gridsize)
                  
 %          f1 = [height * (i-1) + j , (height*i) + j , (height*i) + j + 1];
 %          f2 = [height * (i-1) + j , (height*i) + j + 1, (height*i) + j - height + 1];
-           VInRow = floor((height-1)/step)+1;
+           VInRow = floor((height-1)/gridsize)+1;
            f1 = [VInRow * (i-1) + j , (VInRow*i) + j , (VInRow*i) + j - VInRow + 1];
            f2 = [(VInRow*i) + j , (VInRow*i) + j + 1, (VInRow*i) + j - VInRow + 1];
          
@@ -153,7 +153,7 @@ for i = 1:size(newFaces, 1)
     [in_out] = inpolygon(points(:,1), points(:,2), P(1, :),P(2, :));
 
 
-    in_out = reshape(in_out,[step + 1, step + 1]);
+    in_out = reshape(in_out,[gridsize + 1, gridsize + 1]);
     X_ = X.*in_out;
     Y_ = Y.*in_out;
     t1 = X_(X_(:)>0);
@@ -167,7 +167,16 @@ end
 % Step 4: Create binary image
 figure
 imshow(mask_modified, []);
-imwrite(mask_modified,['masks_modified/' num2str(img_number) '.png'])
+
+folderName = ['masks_modified gs' num2str(gridsize)];
+if ~exist(folderName, 'dir')
+    mkdir(folderName);
+    fprintf('Folder "%s" created.\n', folderName);
+else
+    fprintf('Folder "%s" already exists.\n', folderName);
+end
+
+imwrite(mask_modified,['masks_modified gs' num2str(gridsize) '/' num2str(img_number) '.png'])
 
 % pause(1)
 % clear option
@@ -187,5 +196,17 @@ imwrite(mask_modified,['masks_modified/' num2str(img_number) '.png'])
 % plot_mesh_modified(newVertices_img , newFaces, options);
 % shading faceted; axis tight;
 pause(1)
-write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
-write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)
+folderName = ['Masked meshes gs' num2str(gridsize)];
+if ~exist(folderName, 'dir')
+    mkdir(folderName);
+    fprintf('Folder "%s" created.\n', folderName);
+else
+    fprintf('Folder "%s" already exists.\n', folderName);
+end
+
+write_obj (['Masked meshes gs' num2str(gridsize) '/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
+write_obj (['Masked meshes gs' num2str(gridsize) '/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)
+
+clear
+close all
+end

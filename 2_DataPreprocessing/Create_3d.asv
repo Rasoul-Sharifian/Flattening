@@ -6,7 +6,7 @@ clc
 clear 
 close all
 
-img_number = 115; 
+img_number = 115; %[0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
 
 % Read .mat file contains all 3d points corresponds to image pixels Intel
 % camera
@@ -21,11 +21,11 @@ y = reshape(double(ptCloud.Location(:,2)) , [1280 , 720]);
 z = reshape(double(ptCloud.Location(:,3)) , [1280 , 720]);
 for i = 1:1280
     for j = 1:720
-if x(i,j) == 0 & y(i,j) == 0 & z(i,j) == 0
-    x(i,j) = randn(1)/5;
-    y(i,j) = randn(1)/5;
-    z(i,j) = randn(1)/5;
-end
+        if x(i,j) == 0 & y(i,j) == 0 & z(i,j) == 0
+            x(i,j) = randn(1)/5;
+            y(i,j) = randn(1)/5;
+            z(i,j) = randn(1)/5;
+        end
     end
 end
 
@@ -53,8 +53,8 @@ I = imread(img_filename);
 mask = imread(['img_masks/mask' num2str(img_number) '.png']);
 mask = mask';
 % Display binary mask
-% figure
-% imshow(mask);
+figure
+imshow(mask);
 % projecting 3d points to pixel
 
 % triangulate points with a given step size and a given mask
@@ -96,7 +96,7 @@ for i = 1:floor((width-1)/step)
     end
 end
 
-X = V_img';
+V_img = V_img';
 F = F_img';
 
 % figure , 
@@ -118,7 +118,7 @@ F = F_img';
 %removing vertices outside mask from created meshes
 % Remove vertices from mesh
 newVertices_3d = V_3d';
-newVertices_img = X;
+newVertices_img = V_img;
 newVertices_3d(: ,verticesToRemove) = [];
 newVertices_img(: ,verticesToRemove) = [];
 
@@ -129,14 +129,14 @@ for i = 1:numel(verticesToRemove)
 end
 newFaces(any(isnan(newFaces), 2), :) = [];
 
-figure , 
-plot(newVertices_img(1,:), newVertices_img(2,:),'*')
+% figure , 
+% plot(newVertices_img(1,:), newVertices_img(2,:),'*')
 % hold on
 % plot(newVertices_img(1,k), newVertices_img(2, k))
 
 
 % Step 3: Determine which points are inside each face
-mask_new = zeros(1280,720);
+mask_modified = zeros(1280,720);
 for i = 1:size(newFaces, 1)
     p1 = newVertices_img(1:2, newFaces(i,1));
     p2 = newVertices_img(1:2, newFaces(i,2));
@@ -153,38 +153,39 @@ for i = 1:size(newFaces, 1)
     [in_out] = inpolygon(points(:,1), points(:,2), P(1, :),P(2, :));
 
 
-    in_out = reshape(in_out,[16,16]);
-    X_ = X.*in_out
-    Y_ = Y.*in_out
-    t1 = X_(X_(:)>0)
-    t2 = Y_(Y_(:)>0)
+    in_out = reshape(in_out,[step + 1, step + 1]);
+    X_ = X.*in_out;
+    Y_ = Y.*in_out;
+    t1 = X_(X_(:)>0);
+    t2 = Y_(Y_(:)>0);
     sz = [1280 720];
-    ind = sub2ind(sz,t1(:),t2(:))
-    mask_new (ind) = 1;
+    ind = sub2ind(sz,t1(:),t2(:));
+    mask_modified (ind) = 1;
 
 end
 
 % Step 4: Create binary image
 figure
-% Display the binary image
-imshow(binaryImage, 'InitialMagnification', 'fit');
-pause(1)
-clear option
-figure , 
-options.texture = (I);
-options.PSize = 64;
-options.texture_coords = newVertices_img;
-Y = V_3d';
-plot_mesh_modified(newVertices_3d , newFaces, options);
-shading faceted; axis tight;
-pause(1)
-clear option
-figure , 
-options.texture = (I);
-options.PSize = 64;
-options.texture_coords = newVertices_img;
-plot_mesh_modified(newVertices_img , newFaces, options);
-shading faceted; axis tight;
+imshow(mask_modified, []);
+imwrite(mask_modified,['masks_modified gs/' num2str(img_number) '.png'])
+
+% pause(1)
+% clear option
+% figure , 
+% options.texture = (I);
+% options.PSize = 64;
+% options.texture_coords = newVertices_img;
+% Y = V_3d';
+% plot_mesh_modified(newVertices_3d , newFaces, options);
+% shading faceted; axis tight;
+% pause(1)
+% clear option
+% figure , 
+% options.texture = (I);
+% options.PSize = 64;
+% options.texture_coords = newVertices_img;
+% plot_mesh_modified(newVertices_img , newFaces, options);
+% shading faceted; axis tight;
 pause(1)
 write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
 write_obj (['Masked meshes/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)

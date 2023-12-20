@@ -2,6 +2,7 @@ clc
 clear
 close all
 
+gridsize = 30;
 interp_method = 'cubic'; % 'linear' 'nearest'	'cubic' 'spline'
 for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
     path_rgbimgs = '../1_DataPreparation/Color/';
@@ -13,8 +14,8 @@ for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
         Ia  = imread(Image_path);
         Ia = im2double(Ia);
 
-        [vflat , fflat] = readOBJ(['../3_Flattening/Flattened Meshes ' num2str(frame_number) '/' ...
-            num2str(lambda) '.obj']);
+        [vflat , fflat] = readOBJ(['../3_Flattening/Flattened Meshes gs' num2str(gridsize), ...
+            '/Frame ' num2str(frame_number) '/lambda ' num2str(lambda) '.obj']);
 
         vflat_new = vflat';
         fflat = fflat';
@@ -26,7 +27,8 @@ for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
         yp = 1:outputSize_y;
         [xq , yq] = meshgrid(xp , yp);
 
-        [vimg , fimg] = readOBJ(['../2_DataPreprocessing/Masked meshes/' 'Mesh_fram_' num2str(frame_number) '_img_masked.obj']);%
+        [vimg , fimg] = readOBJ(['../2_DataPreprocessing/Masked meshes gs' num2str(gridsize),'/' ...
+            'Mesh_fram_' num2str(frame_number) '_img_masked.obj']);%
 
         vimg = vimg';
         fimg = fimg';
@@ -48,13 +50,13 @@ for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
 	        w3(~r)=0; w3 = w3.*mask_out;
             mask_out(r) = 0;
 
-            Vo1 = vimg(1:2,fimg(1,T)); % Cartesian coordinates of the first vertex in output image
-            Vo2 = vimg(1:2,fimg(2,T)); % Cartesian coordinates of the secend vertex in output image
-            Vo3 = vimg(1:2,fimg(3,T)); % Cartesian coordinates of the third vertex in output image
-            VertexOut = [Vo1 Vo2 Vo3];
-
-	        xCA = xCA + w1.*VertexOut(1,1) + w2.*VertexOut(1,2) + w3.*VertexOut(1,3);
-	        yCA = yCA + w1.*VertexOut(2,1) + w2.*VertexOut(2,2) + w3.*VertexOut(2,3);
+            % Vo1 = vimg(1:2,fimg(1,T)); % Cartesian coordinates of the first vertex in output image
+            % Vo2 = vimg(1:2,fimg(2,T)); % Cartesian coordinates of the secend vertex in output image
+            % Vo3 = vimg(1:2,fimg(3,T)); % Cartesian coordinates of the third vertex in output image
+            % VertexOut = [Vo1 Vo2 Vo3];
+            % 
+	        % xCA = xCA + w1.*VertexOut(1,1) + w2.*VertexOut(1,2) + w3.*VertexOut(1,3);
+	        % yCA = yCA + w1.*VertexOut(2,1) + w2.*VertexOut(2,2) + w3.*VertexOut(2,3);
 
         end
 
@@ -64,14 +66,14 @@ for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
         Image_out(:,:,3) = interp2(X,Y,double(Ia(:,:,3)),xCA,yCA);
         % figure , imshow(Image_out, [])
 
-        folderName = ['img_flat_' num2str(frame_number)];
+        folderName = ['img_flat_gs' num2str(gridsize),'/Frame_' num2str(frame_number)];
         if ~exist(folderName, 'dir')
             mkdir(folderName);
             fprintf('Folder "%s" created.\n', folderName);
         else
             fprintf('Folder "%s" already exists.\n', folderName);
         end
-        path_output_imgs = ['img_flat_' num2str(frame_number) '/Frame_lambda' num2str(lambda) '.png'];
+        path_output_imgs = ['img_flat_gs' num2str(gridsize),'/Frame_' num2str(frame_number) '/lambda' num2str(lambda) '.png'];
         imwrite(Image_out , path_output_imgs )
 
     time = toc
