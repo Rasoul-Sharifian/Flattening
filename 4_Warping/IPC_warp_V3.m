@@ -28,9 +28,9 @@ tic
         [vflat , fflat] = readOBJ(['../3_Flattening/Flattened Meshes ' num2str(frame_number) '/' ...
             num2str(lambda) '.obj']);
 
-        vflat = vflat';
-        vflat_new(1,:) = vflat(1,:);%round(1/1000 * (vflat(1,:) - min(vflat(1,:))) * size(Ia , 1));
-        vflat_new(2,:) = vflat(2,:);%round(1/1000 * (vflat(2,:) - min(vflat(2,:))) * size(Ia , 2));
+        vflat_new = vflat';
+        % vflat_new(1,:) = vflat(1,:);%round(1/1000 * (vflat(1,:) - min(vflat(1,:))) * size(Ia , 1));
+        % vflat_new(2,:) = vflat(2,:);%round(1/1000 * (vflat(2,:) - min(vflat(2,:))) * size(Ia , 2));
 
         outputSize_x = 1280; %max(vflat_new(1,:));
         outputSize_y = 720; %max(vflat_new(2,:));
@@ -79,8 +79,17 @@ tic
         Image_out(:,:,1) = interp2(X,Y,double(Ia(:,:,1)),xCA,yCA);
         Image_out(:,:,2) = interp2(X,Y,double(Ia(:,:,2)),xCA,yCA);
         Image_out(:,:,3) = interp2(X,Y,double(Ia(:,:,3)),xCA,yCA);
+        % figure , imshow(Image_out, [])
 
-        figure , imshow(Image_out, [])
+        folderName = ['img_flat_' num2str(frame_number)];
+        if ~exist(folderName, 'dir')
+            mkdir(folderName);
+            fprintf('Folder "%s" created.\n', folderName);
+        else
+            fprintf('Folder "%s" already exists.\n', folderName);
+        end
+        path_output_imgs = ['img_flat_' num2str(frame_number) '/Frame_lambda' num2str(lambda) '.png'];
+        imwrite(Image_out , path_output_imgs )
 
     lambda
     frame_number
