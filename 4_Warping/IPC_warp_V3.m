@@ -1,36 +1,23 @@
 clc
 clear
 close all
-% main_path = '/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flatenning/07_08_2023/';
 
 interp_method = 'cubic'; % 'linear' 'nearest'	'cubic' 'spline'
 for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
     path_rgbimgs = '../1_DataPreparation/Color/';
 
     for lambda = 1;%960:-10:800
-tic
+        tic
         
         Image_path = [path_rgbimgs 'color_frame_' num2str(frame_number) '.png'];
         Ia  = imread(Image_path);
         Ia = im2double(Ia);
 
-        % Vr = Ia(:,:,1);
-        % Vg = Ia(:,:,2);
-        % Vb = Ia(:,:,3);
-
-        % f1 = figure;
-        % ax1 = axes;
-        % imshow(Ia , [])
-        % axis on
-
-        [X , Y] = meshgrid(1:size(Ia , 2) , 1:size(Ia ,1));
-
         [vflat , fflat] = readOBJ(['../3_Flattening/Flattened Meshes ' num2str(frame_number) '/' ...
             num2str(lambda) '.obj']);
 
         vflat_new = vflat';
-        % vflat_new(1,:) = vflat(1,:);%round(1/1000 * (vflat(1,:) - min(vflat(1,:))) * size(Ia , 1));
-        % vflat_new(2,:) = vflat(2,:);%round(1/1000 * (vflat(2,:) - min(vflat(2,:))) * size(Ia , 2));
+        fflat = fflat';
 
         outputSize_x = 1280; %max(vflat_new(1,:));
         outputSize_y = 720; %max(vflat_new(2,:));
@@ -42,12 +29,7 @@ tic
         [vimg , fimg] = readOBJ(['../2_DataPreprocessing/Masked meshes/' 'Mesh_fram_' num2str(frame_number) '_img_masked.obj']);%
 
         vimg = vimg';
-        %
-        % f2 = figure;
-        % ax2 = axes;
         fimg = fimg';
-        fflat = fflat';
-
 
         xCA = zeros(720,1280);
         yCA = zeros(720,1280);
@@ -76,6 +58,7 @@ tic
 
         end
 
+        [X , Y] = meshgrid(1:size(Ia , 2) , 1:size(Ia ,1));
         Image_out(:,:,1) = interp2(X,Y,double(Ia(:,:,1)),xCA,yCA);
         Image_out(:,:,2) = interp2(X,Y,double(Ia(:,:,2)),xCA,yCA);
         Image_out(:,:,3) = interp2(X,Y,double(Ia(:,:,3)),xCA,yCA);
@@ -91,6 +74,7 @@ tic
         path_output_imgs = ['img_flat_' num2str(frame_number) '/Frame_lambda' num2str(lambda) '.png'];
         imwrite(Image_out , path_output_imgs )
 
+    time = toc
     lambda
     frame_number
     end
