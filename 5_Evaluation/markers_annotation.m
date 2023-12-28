@@ -2,8 +2,8 @@ clear
 close all
 clc
 
-imgName = 'intel_02_Color';%'t2_k1_c';
-imgPath = 'intel_02_Color.png';%['t2_k1_c.JPG'];
+imgName = 'color_frame_140';%'t2_k1_c';
+imgPath = 'color_frame_140.png';%['t2_k1_c.JPG'];
 outputPath = '';
 
 numOfMarkers = 8;
@@ -28,7 +28,6 @@ for i=1:numOfMarkers
     title(['Select marker #' num2str(i)]);
     marker = drawpoint('SelectedColor','red');
     markerCoords{i} = marker.Position;
-
 end
 pause;
 close(figIm);

@@ -7,7 +7,7 @@ clc
 % addpath /home/yamito/Documents/trocar_estimation/yamid_trocar_estimation/experiments/pointing_experiments/tool_poses_external_camera/experiments_all/images_all/navid/Result
 % addpath /home/yamito/Documents/trocar_estimation/yamid_trocar_estimation/experiments/pointing_experiments/markers2D/experiments_all/navid
 
-imgPath =  'intel_02_Color.png';%['t2_k1_c.JPG'];
+imgPath =  'color_frame_140.png';%['t2_k1_c.JPG'];
 % imgPath = '/home/yamito/Documents/trocar_estimation/yamid_trocar_estimation/experiments/pointing_experiments/tool_poses_external_camera/experiments_all/images_all/navid/Result';
 annotationsPath = '/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flattening/07_08_2023_Git/5_Evaluation/';
 % annotationsPath = '/home/yamito/Documents/trocar_estimation/yamid_trocar_estimation/experiments/pointing_experiments/markers2D/experiments_all/navid';
@@ -68,7 +68,7 @@ for ii=1:nfiles
     % filenameNoExt = filenameSplit{1};
     % 
    % load(['t2_k1_c.mat'])
-    load(['intel_02_Color.mat'])
+    load(['color_frame_140.mat'])
 
     x3d_x = [[M11(:,2:4)]',[M22(:,2:4)]',[M33(:,2:4)]',[M44(:,2:4)]',[M55(:,2:4)]',[M66(:,2:4)]',[M77(:,2:4)]',[M88(:,2:4)]'];
     x3d = str2double(x3d_x);
@@ -128,7 +128,7 @@ for ii=1:nfiles
     end
     
     % Save transformation into the corresponding mat file:
-    filenameNoExt = 'intel_02_Color';%'t2_k1_c';
+    filenameNoExt = 'color_frame_55';%'t2_k1_c';
     posesPath = 'posesPath';
     save([posesPath '/' filenameNoExt '.mat'],'R','T');
 
