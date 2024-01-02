@@ -2,51 +2,57 @@ clc
 clear
 close all
 
+% a1 = load('posesPath/color_frame_55.mat');
 a1 = load('posesPath/color_frame_55.mat');
-a2 = load('posesPath/color_frame_140.mat');
 
-R_relative = a2.R * a1.R'
-T_relative = a2.T - (R_relative * a1.T)
+% R_relative = a2.R * a1.R'
+% T_relative = a2.T - (R_relative * a1.T)
 
-I1 = imread('color_frame_55.png');
-figure , imshow(I1)
-I2 = imread('color_frame_140.png');
+% I1 = imread('color_frame_55.png');
+% figure , imshow(I1)
+I2 = imread('color_frame_55.png');
 figure , imshow(I2)
-path_depth = '../1_DataPreparation/20231228_103516/Depth/depth_frame_140.png';
+path_depth = '../1_DataPreparation/20231228_103516/Depth/depth_frame_55.png';
 d_I = imread(path_depth);
 d_I = double(d_I);
 figure , imshow(d_I , [])
 %% De_Projection
-depth = d_I(129,362) * .0001;.289;%d_I(344,196) * 0.001;
+X = 343;
+Y = 196;
+depth = d_I(Y,X) * .1;.289;%d_I(344,196) * 0.001;
 
 % % Color camera, and resolution 1280 * 720
 fx = 4.17368e+02;
 fy = 4.17368e+02;
 cx = 4.23688e+02;
 cy = 2.46202e+02;
+K=[fx 0 cx; 0 fy cy; 0 0 1];
+
+Pc_ = depth * inv(K) * [X,Y,1]'
 % coeffs = [0 0 0 0 0];
 % 
-x = (362 - cx)/fx;
-y = (129 - cy)/fy;
+x = (X - cx)/fx;
+y = (Y - cy)/fy;
 % m = 1;
 % A1=[fx/m 0 fy/m 0; 0 cx/m cy/m 0; 0 0 1 0];%[k(1)/m 0 k(7)/m 0; 0 k(1)/m k(8)/m 0; 0 0 1 0];
 % A1 = A1(:,1:3);
 Pc(1) = depth * x;
 Pc(2) = depth * y;
 Pc(3) = depth;
-Pc = Pc';Pc = Pc*1000;% to mm
-Mext = [a2.R a2.T;0 0 0 1];
-Pw_h = inv(Mext) * [Pc;1];
+Pc = Pc';Pc = Pc*1% to mm
+% Pc = [-44,-79,289]';
+Mext = [a1.R a1.T;0 0 0 1];
+Pw_h = inv(Mext) * [Pc;1]
 
 
 
 % Pw = [-72.98,23.74,-31.69];
 % Pw_h = [Pw';1]
-m=1;
-K=[fx/m 0 fy/m; 0 cx/m cy/m; 0 0 1];
+%Pw_h = [-48.52;5.16;-55.60;1] 
+K=[fx 0 cx; 0 fy cy; 0 0 1];
 
-P = K * [a2.R a2.T] * Pw_h;
-Pn = P/P(3);
+P = K * [a1.R a1.T] * Pw_h;
+Pn = P/P(3)
 
 
 
