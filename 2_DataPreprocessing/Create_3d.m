@@ -6,22 +6,26 @@ clc
 clear 
 close all
 
-for img_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
+for img_number = [15]
 gridsize = 15;
 
 % Read .mat file contains all 3d points corresponds to image pixels Intel
 % camera
-path = '../1_DataPreparation/PtCloud/';
+path = '../1_DataPreparation/20240102_095811/PtCloud/';
 
 filename = [path 'frame_' num2str(img_number) '.ply'];
 ptCloud = pcread(filename);
 %  figure , pcshow(ptCloud);
 % ptCloudOut = pcdownsample(ptCloud,'random',percentage);
-x = reshape(double(ptCloud.Location(:,1)) , [1280 , 720]);%[1280 , 720]
-y = reshape(double(ptCloud.Location(:,2)) , [1280 , 720]);
-z = reshape(double(ptCloud.Location(:,3)) , [1280 , 720]);
-for i = 1:1280
-    for j = 1:720
+
+Width = 848;
+Height = 480;
+
+x = reshape(double(ptCloud.Location(:,1)) , [Width , Height]);%[1280 , 720]
+y = reshape(double(ptCloud.Location(:,2)) , [Width , Height]);
+z = reshape(double(ptCloud.Location(:,3)) , [Width , Height]);
+for i = 1:Width
+    for j = 1:Height
         if x(i,j) == 0 & y(i,j) == 0 & z(i,j) == 0
             x(i,j) = randn(1)/5;
             y(i,j) = randn(1)/5;
@@ -31,11 +35,11 @@ for i = 1:1280
 end
 
 % figure , pcshow([x ,y ,z]);
-path_img = '../1_DataPreparation/Color/';
+path_img = '../1_DataPreparation/20240102_095811/Color/';
 
 img_filename = [path_img 'color_frame_' num2str(img_number) '.png'];
 I = imread(img_filename);
-% figure , imshow(I,[])
+figure , imshow(I,[])
 
 % I_new = I ([80:680],[600:1150],:);
 % figure , imshow(I_new,[])
@@ -44,14 +48,15 @@ I = imread(img_filename);
 % z_new = z([600:1150],[80:680]);
 % figure , pcshow([x_new(:) , y_new(:) , z_new(:)]);
 
-% %Get polygon coordinates
-% h = impoly;
-% %Create binary image mask
-% mask = createMask(h);
-% %Set all pixels inside polygon to 255, and all pixels outside polygon to 0
-% mask = uint8(mask * 255);
-% imwrite(mask,['img_masks/mask' num2str(img_number) '.png'])
-mask = imread(['img_masks/mask' num2str(img_number) '.png']);
+%Get polygon coordinates
+h = impoly;
+
+%Create binary image mask
+mask = createMask(h);
+%Set all pixels inside polygon to 255, and all pixels outside polygon to 0
+mask = uint8(mask * 255);
+imwrite(mask,['20240102_095811/img_masks/mask' num2str(img_number) '.png'])
+mask = imread(['20240102_095811/img_masks/mask' num2str(img_number) '.png']);
 mask = mask';
 % Display binary mask
 figure
@@ -168,7 +173,7 @@ end
 figure
 imshow(mask_modified, []);
 
-folderName = ['masks_modified gs' num2str(gridsize)];
+folderName = ['20240102_095811/masks_modified gs' num2str(gridsize)];
 if ~exist(folderName, 'dir')
     mkdir(folderName);
     fprintf('Folder "%s" created.\n', folderName);
@@ -176,27 +181,27 @@ else
     fprintf('Folder "%s" already exists.\n', folderName);
 end
 
-imwrite(mask_modified,['masks_modified gs' num2str(gridsize) '/' num2str(img_number) '.png'])
+imwrite(mask_modified,[folderName '/' num2str(img_number) '.png'])
 
-% pause(1)
-% clear option
-% figure , 
-% options.texture = (I);
-% options.PSize = 64;
-% options.texture_coords = newVertices_img;
-% Y = V_3d';
-% plot_mesh_modified(newVertices_3d , newFaces, options);
-% shading faceted; axis tight;
-% pause(1)
-% clear option
-% figure , 
-% options.texture = (I);
-% options.PSize = 64;
-% options.texture_coords = newVertices_img;
-% plot_mesh_modified(newVertices_img , newFaces, options);
-% shading faceted; axis tight;
 pause(1)
-folderName = ['Masked meshes gs' num2str(gridsize)];
+clear option
+figure , 
+options.texture = (I);
+options.PSize = 64;
+options.texture_coords = newVertices_img;
+Y = V_3d';
+plot_mesh_modified(newVertices_3d , newFaces, options);
+shading faceted; axis tight;
+pause(1)
+clear option
+figure , 
+options.texture = (I);
+options.PSize = 64;
+options.texture_coords = newVertices_img;
+plot_mesh_modified(newVertices_img , newFaces, options);
+shading faceted; axis tight;
+pause(1)
+folderName = ['20240102_095811/Masked meshes gs' num2str(gridsize)];
 if ~exist(folderName, 'dir')
     mkdir(folderName);
     fprintf('Folder "%s" created.\n', folderName);
@@ -204,9 +209,9 @@ else
     fprintf('Folder "%s" already exists.\n', folderName);
 end
 
-write_obj (['Masked meshes gs' num2str(gridsize) '/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
-write_obj (['Masked meshes gs' num2str(gridsize) '/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)
-
-clear
-close all
+write_obj ([folderName '/Mesh_fram_' num2str(img_number) '_3d_masked.obj'],newVertices_3d,newFaces)
+write_obj ([folderName '/Mesh_fram_' num2str(img_number) '_img_masked.obj'],newVertices_img,newFaces)
+% 
+% clear
+% close all
 end

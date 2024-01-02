@@ -2,39 +2,41 @@ clc
 clear
 close all
 
-gridsize = 30;
+gridsize = 15;
 interp_method = 'cubic'; % 'linear' 'nearest'	'cubic' 'spline'
-for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
-    path_rgbimgs = '../1_DataPreparation/Color/';
+for frame_number = [325];
+    path_rgbimgs = '../1_DataPreparation/20240102_095811/Color/';
 
-    for lambda = 1;%960:-10:800
+    for lambda = 1;990:-10:600
         tic
         
         Image_path = [path_rgbimgs 'color_frame_' num2str(frame_number) '.png'];
         Ia  = imread(Image_path);
         Ia = im2double(Ia);
+        Width = size(Ia , 2);
+        Height = size(Ia , 1);
 
-        [vflat , fflat] = readOBJ(['../3_Flattening/Flattened Meshes gs' num2str(gridsize), ...
+        [vflat , fflat] = readOBJ(['../3_Flattening/20240102_095811/Flattened Meshes gs' num2str(gridsize), ...
             '/Frame ' num2str(frame_number) '/lambda ' num2str(lambda) '.obj']);
 
         vflat_new = vflat';
         fflat = fflat';
 
-        outputSize_x = 1280; %max(vflat_new(1,:));
-        outputSize_y = 720; %max(vflat_new(2,:));
+        outputSize_x = Width; %max(vflat_new(1,:));
+        outputSize_y = Height; %max(vflat_new(2,:));
 
         xp = 1:outputSize_x;
         yp = 1:outputSize_y;
         [xq , yq] = meshgrid(xp , yp);
 
-        [vimg , fimg] = readOBJ(['../2_DataPreprocessing/Masked meshes gs' num2str(gridsize),'/' ...
+        [vimg , fimg] = readOBJ(['../2_DataPreprocessing/20240102_095811/Masked meshes gs' num2str(gridsize),'/' ...
             'Mesh_fram_' num2str(frame_number) '_img_masked.obj']);%
 
         vimg = vimg';
         fimg = fimg';
 
-        xCA = zeros(720,1280);
-        yCA = zeros(720,1280);
+        xCA = zeros(Height,Width);
+        yCA = zeros(Height,Width);
         Image_out = zeros(size(Ia));
         mask_out = ones(size(Ia,1:2));
 
@@ -66,14 +68,14 @@ for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
         Image_out(:,:,3) = interp2(X,Y,double(Ia(:,:,3)),xCA,yCA);
         figure , imshow(Image_out, [])
 
-        folderName = ['img_flat_gs' num2str(gridsize),'/Frame_' num2str(frame_number)];
+        folderName = ['20240102_095811/img_flat_gs' num2str(gridsize),'/Frame_' num2str(frame_number)];
         if ~exist(folderName, 'dir')
             mkdir(folderName);
             fprintf('Folder "%s" created.\n', folderName);
         else
             fprintf('Folder "%s" already exists.\n', folderName);
         end
-        path_output_imgs = ['img_flat_gs' num2str(gridsize),'/Frame_' num2str(frame_number) '/lambda' num2str(lambda) '.png'];
+        path_output_imgs = [folderName '/lambda' num2str(lambda) '.png'];
         imwrite(Image_out , path_output_imgs )
 
     time = toc

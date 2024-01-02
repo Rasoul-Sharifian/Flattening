@@ -10,7 +10,8 @@ pipeline = rs.pipeline()
 config = rs.config()
 
 # Tell the configuration to use a recorded .bag file
-path ='20231228_103516.bag'
+file_name = '20240102_095811'
+path = '/media/rasoul/830873c3-8201-4a0c-8abe-39d71bdf67d7/Flattening/BAGS/' + file_name + '.bag'
 
 config.enable_device_from_file(path)
 
@@ -56,10 +57,10 @@ while True:
     depth_image = np.asanyarray(depth_frame.get_data())
     
     # Save the color image as a .png file
-    cv2.imwrite("20231228_103516/Color/color_frame_{}.png".format(frame_index), color_image)
+    cv2.imwrite(file_name + "/Color/color_frame_{}.png".format(frame_index), color_image)
     
     # Save the depth image as a .png file
-    cv2.imwrite("20231228_103516/Depth/depth_frame_{}.png".format(frame_index), depth_image)
+    cv2.imwrite(file_name + "/Depth/depth_frame_{}.png".format(frame_index), depth_image)
     
     # Create a list to store the point cloud
     point_cloud = []
@@ -138,7 +139,7 @@ while True:
     pcd.colors = o3d.utility.Vector3dVector(colors)
     
     # Save the point cloud as a .ply file
-    o3d.io.write_point_cloud("20231228_103516/PtCloud/frame_{}.ply".format(frame_index), pcd, write_ascii=True)
+    o3d.io.write_point_cloud(file_name + "/PtCloud/frame_{}.ply".format(frame_index), pcd, write_ascii=True)
     
     # Increment the frame index
     frame_index += 1

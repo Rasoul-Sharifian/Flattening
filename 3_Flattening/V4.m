@@ -7,8 +7,8 @@ clear
 % close all
 gridsize = 15;
 
-for frmam_ind = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115]
-path = ['../2_DataPreprocessing/Masked meshes gs' num2str(gridsize) '/Mesh_fram_', num2str(frmam_ind), '_3d_masked.obj'];
+for frmam_ind = [325]
+path = ['../2_DataPreprocessing/20240102_095811/Masked meshes gs' num2str(gridsize) '/Mesh_fram_', num2str(frmam_ind), '_3d_masked.obj'];
 
 [v, f] = readOBJ(path) ;
 
@@ -16,7 +16,7 @@ path = ['../2_DataPreprocessing/Masked meshes gs' num2str(gridsize) '/Mesh_fram_
 % title('3d mesh')
 % shading faceted; axis tight;
 % pause(1)
-path_img = ['../2_DataPreprocessing/Masked meshes gs' num2str(gridsize) '/Mesh_fram_', num2str(frmam_ind), '_img_masked.obj'];
+path_img = ['../2_DataPreprocessing/20240102_095811/Masked meshes gs' num2str(gridsize) '/Mesh_fram_', num2str(frmam_ind), '_img_masked.obj'];
 [v_img, f_img] = readOBJ(path_img) ;
 p0 = zeros(size(v_img ,1) * 2 ,1);
 p0(1:2:end) = v_img(:,1);
@@ -50,7 +50,7 @@ for lambda = 0:.001:1
 
     x_show = [x(1:2:end) , x(2:2:end)];
 
-    folderName = ['Flattened Meshes ' 'gs' num2str(gridsize) '/Frame ', num2str(frmam_ind)];
+    folderName = ['20240102_095811/Flattened Meshes ' 'gs' num2str(gridsize) '/Frame ', num2str(frmam_ind)];
 
 if ~exist(folderName, 'dir')
     mkdir(folderName);

@@ -2,10 +2,10 @@ clc
 clear
 close all
 
-gridsize = 30;
+gridsize = 15;
 interp_method = 'cubic'; % 'linear' 'nearest'	'cubic' 'spline'
-for frame_number = [0 17 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 115];
-    path_rgbimgs = '../1_DataPreparation/Color/';
+for frame_number = [15];
+    path_rgbimgs = '../1_DataPreparation/20240102_095811/Color/';
 
     for lambda = 1;%960:-10:800
         tic
@@ -20,10 +20,10 @@ title('Original Image');
 % Define the vertices of the first and second meshes
 % Replace these with your actual vertices
 
-        [vflat , fflat] = readOBJ(['../3_Flattening/Flattened Meshes gs' num2str(gridsize), ...
+        [vflat , fflat] = readOBJ(['../3_Flattening/20240102_095811/Flattened Meshes gs' num2str(gridsize), ...
             '/Frame ' num2str(frame_number) '/lambda ' num2str(lambda) '.obj']);
 
-        [vimg , fimg] = readOBJ(['../2_DataPreprocessing/Masked meshes gs' num2str(gridsize),'/' ...
+        [vimg , fimg] = readOBJ(['../2_DataPreprocessing/20240102_095811/Masked meshes gs' num2str(gridsize),'/' ...
         'Mesh_fram_' num2str(frame_number) '_img_masked.obj']);%
         
 vertices_first_mesh = vimg;%[x1_first_mesh, y1_first_mesh; x2_first_mesh, y2_first_mesh; x3_first_mesh, y3_first_mesh];
